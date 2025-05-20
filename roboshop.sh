@@ -36,7 +36,7 @@ for name in "${INSTANCES[@]}"; do
       --output text)
 
     # Output the results
-    echo "Instance launched successfully: $name ($INSTANCE_ID)"
-    echo "Private IP: $PRIVATE_IP"
-    echo "Public IP: $PUBLIC_IP"
+    echo "Instance launched successfully: $name"
+    echo " $name Private IP: $PRIVATE_IP"
+    echo " $name Public IP: $PUBLIC_IP"
 done
