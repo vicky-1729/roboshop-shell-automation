@@ -44,9 +44,10 @@ for name in "${INSTANCES[@]}"; do
       --query "Reservations[0].Instances[0].PublicIpAddress" \
       --output text)
 
-    # Output the results
+    # Output the results with color
     echo -e "${g}Instance launched successfully:${s} $name"
-    echo -e "${m} $name Private IP: ${s} $PRIVATE_IP"
-    echo -e "${m} $name Public IP: ${s} $PUBLIC_IP"
+    echo -e "${m}$name Private IP:${s} $PRIVATE_IP"
+    echo -e "${m}$name Public IP:${s} $PUBLIC_IP"
+
 done
 
