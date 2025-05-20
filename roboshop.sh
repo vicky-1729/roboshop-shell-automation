@@ -21,3 +21,18 @@ INSTANCE_ID=$(aws ec2 run-instances \
   --output text)
 
 echo "Instance launched successfully: $INSTANCE_ID"
+# Get IPs from EC2 describe-instances
+PRIVATE_IP=$(aws ec2 describe-instances \
+  --instance-ids "$INSTANCE_ID" \
+  --query "Reservations[0].Instances[0].PrivateIpAddress" \
+  --output text)
+
+PUBLIC_IP=$(aws ec2 describe-instances \
+  --instance-ids "$INSTANCE_ID" \
+  --query "Reservations[0].Instances[0].PublicIpAddress" \
+  --output text)
+
+# Print them with labels
+echo "Private IP: $PRIVATE_IP"
+echo "Public IP: $PUBLIC_IP"
+
