@@ -3,6 +3,15 @@
 # Make sure AWS CLI is configured
 # aws configure
 
+
+# Define colors
+r="\033[31m"
+g="\033[32m"
+y="\033[33m"
+m="\033[36m"
+s="\033[0m"
+
+
 # Configuration variables
 AMI_ID="ami-09c813fb71547fc4f"     # Replace with your AMI ID
 SG_ID="sg-040ecf8bb247d6036"       # Replace with your actual Security Group ID
@@ -36,7 +45,8 @@ for name in "${INSTANCES[@]}"; do
       --output text)
 
     # Output the results
-    echo "Instance launched successfully: $name"
-    echo " $name Private IP: $PRIVATE_IP"
-    echo " $name Public IP: $PUBLIC_IP"
+    echo "${g}Instance launched successfully:${s} $name"
+    echo "${m} $name Private IP: ${s} $PRIVATE_IP"
+    echo "${m} $name Public IP: ${s} $PUBLIC_IP"
 done
+
