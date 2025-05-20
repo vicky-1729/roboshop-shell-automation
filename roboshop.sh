@@ -20,35 +20,36 @@ DOMAIN_NAME="tcloudguru.in"        # Replace with your domain name
 INSTANCES=("mongodb" "redis" "mysql" "rabbitmq" "catalogue" "user" "cart" "shipping" "payment" "dispatch" "frontend")
 
 # Launch the instances
-  echo "lanuching 11 instance so it will take little bit time"
-# for name in "${INSTANCES[@]}"; do
-#     # Launch EC2 instance
-#     INSTANCE_ID=$(aws ec2 run-instances \
-#       --image-id "$AMI_ID" \
-#       --instance-type t2.micro \
-#       --security-group-ids "$SG_ID" \
-#       --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name}]" \
-#       --query 'Instances[0].InstanceId' \
-#       --output text)
+echo "lanuching ${g}11${s} instance so it will take little bit time"
+for name in "${INSTANCES[@]}"; 
+do
+    # Launch EC2 instance
+    INSTANCE_ID=$(aws ec2 run-instances \
+      --image-id "$AMI_ID" \
+      --instance-type t2.micro \
+      --security-group-ids "$SG_ID" \
+      --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name}]" \
+      --query 'Instances[0].InstanceId' \
+      --output text)
 
-#     # Wait until the instance is running
-#     aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
+    # Wait until the instance is running
+    aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
 
-#     # Fetch public and private IPs
-#     PRIVATE_IP=$(aws ec2 describe-instances \
-#       --instance-ids "$INSTANCE_ID" \
-#       --query "Reservations[0].Instances[0].PrivateIpAddress" \
-#       --output text)
+    # Fetch public and private IPs
+    PRIVATE_IP=$(aws ec2 describe-instances \
+      --instance-ids "$INSTANCE_ID" \
+      --query "Reservations[0].Instances[0].PrivateIpAddress" \
+      --output text)
 
-#     PUBLIC_IP=$(aws ec2 describe-instances \
-#       --instance-ids "$INSTANCE_ID" \
-#       --query "Reservations[0].Instances[0].PublicIpAddress" \
-#       --output text)
+    PUBLIC_IP=$(aws ec2 describe-instances \
+      --instance-ids "$INSTANCE_ID" \
+      --query "Reservations[0].Instances[0].PublicIpAddress" \
+      --output text)
 
-#     # Output the results with color
-#     echo -e "${g}Instance launched successfully:${s} $name"
-#     echo -e "${m}$name Private IP:${s} $PRIVATE_IP"
-#     echo -e "${m}$name Public IP:${s} $PUBLIC_IP"
+    # Output the results with color
+    echo -e "${g}Instance launched successfully:${s} $name"
+    echo -e "${m}$name Private IP:${s} $PRIVATE_IP"
+    echo -e "${m}$name Public IP:${s} $PUBLIC_IP"
 
-# done
+done
 
