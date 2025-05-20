@@ -45,8 +45,8 @@ for name in "${INSTANCES[@]}"; do
       --output text)
 
     # Output the results
-    echo "${g}Instance launched successfully:${s} $name"
-    echo "${m} $name Private IP: ${s} $PRIVATE_IP"
-    echo "${m} $name Public IP: ${s} $PUBLIC_IP"
+    echo -e "${g}Instance launched successfully:${s} $name"
+    echo -e "${m} $name Private IP: ${s} $PRIVATE_IP"
+    echo -e "${m} $name Public IP: ${s} $PUBLIC_IP"
 done
 
