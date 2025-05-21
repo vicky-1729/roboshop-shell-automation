@@ -12,9 +12,9 @@ s="\e[0m"
 
 if [ "$(id -u)" -eq 0 ]
 then
-    echo "your are a ${r} root ${s} user you directly run the script"
+    echo "your are a ${r}root${s} user you directly run the script"
 else
-    echo "you are ${r} not a root user ${s} please run the script with sudo"
+    echo "you are ${r}not a root user${s} please run the script with sudo"
     exit 1
 fi
 
