@@ -20,7 +20,8 @@ DOMAIN_NAME="tcloudguru.in"        # Replace with your domain name
 INSTANCES=("mongodb" "redis" "mysql" "rabbitmq" "catalogue" "user" "cart" "shipping" "payment" "dispatch" "frontend")
 
 # Launch the instances
-echo "lanuching ${g}11${s} instance so it will take little bit time"
+echo "launching ${g}11${s} instances. This will take a little bit of time..."
+
 for name in $@; 
 do
     # Launch EC2 instance
