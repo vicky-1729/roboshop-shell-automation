@@ -33,7 +33,7 @@ validate (){
        exit 1
     fi
 }
-
+mkdir -p $log_folder
 cp repos/mongo.repo /etc/yum.repos.d/mongodb.repo &>>$log_files
 validate $? "creating repo file"
 
