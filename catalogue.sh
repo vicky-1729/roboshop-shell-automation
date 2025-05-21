@@ -52,7 +52,7 @@ validate $? "NodeJS installation"
 id roboshop &>> "$LOG_FILES"
 if [ $? -ne 0 ]; then
     echo -e "${y}Adding user for roboshop...${s}"
-    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> "$LOG_FILES"
     validate $? "Roboshop user creation"
 else
     echo -e "${g}User 'roboshop' already exists.${m} Skipping user creation.${s}"
