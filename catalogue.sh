@@ -35,16 +35,16 @@ validate() {
 }
 
 echo "disbaling nodejs...."
-dnf module disable nodejs -y
+dnf module disable nodejs -y &>> "$LOG_FILES"
 validate $? "nodjes is disabled"
 
 
 echo "enabling the nodejs:20...."
-dnf module enable nodejs:20 -y
+dnf module enable nodejs:20 -y &>> "$LOG_FILES"
 validate $? "nodejs:20 is enabling"
 
 echo "installing nodejs....."
-dnf install nodejs -y
+dnf install nodejs -y &>> "$LOG_FILES"
 validate $? "nodejs installation"
 
 
@@ -53,28 +53,30 @@ echo "adding user for roboshop ..."
 useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
 validate $? "roboshop user creation"
 
+rm -rf /app/*
 
-mkdir /app 
+mkdir -p /app 
 validate $? "app folder creation"
 
 
+rm -rf /app/*
 echo "downloading the catalogue zip file ...."
-curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip 
+curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>> "$LOG_FILES"
 validate $? "downloading catalogue zip"
 
 cd /app
 
 echo "unzipping the catalogue zip file ...."
-unzip /tmp/catalogue.zip
+unzip /tmp/catalogue.zip &>> "$LOG_FILES"
 validate $? "unzipping catalogue zip"
 
 
 echo "install the dependices..."
-npm install 
+npm install &>> "$LOG_FILES"
 validate $? "install the dependices"
 
 echo "creating service for catalogue"
-cp $script_dir/services/catalogue.service /etc/systemd/system/catalogue.service
+cp $script_dir/services/catalogue.service /etc/systemd/system/catalogue.service  &>> "$LOG_FILES"
 validate $? "service has been created for the catalogue"
 
 
@@ -85,19 +87,25 @@ VALIDATE $? "Starting Catalogue"
 
 
 echo "creating the repo for the of mongodb clinet software  "
-cp $script_dir/repos/mongo.repo /etc/yum.repos.d/mongodb.repo
+cp $script_dir/repos/mongo.repo /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILES"
 validate $? "added mongodb repo"
 
 echo "installling the mongo db..."
-dnf install mongodb-mongosh -y
+dnf install mongodb-mongosh -y &>> "$LOG_FILES"
 validate $? "installion of mongodb"
 
-echo "loading the data into mongodb ..."
-mongosh --host mongodb.tcloudguru.in </app/db/master-data.js
-validate $? "loading the data"
 
-echo "checking whetaher that mongodb is connected or not.."
-mongosh --host mongodb.tcloudguru.in 
-validate $? "connecting to mongodb "
+STATUS=$(mongosh --host  mongodb.tcloudguru.in --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+if [  "$STATUS" -lt 0 ]
+then
+    echo "loading the data into mongodb ..."
+    mongosh --host mongodb.tcloudguru.in </app/db/master-data.js &>> "$LOG_FILES"
+    validate $? "loading the data"
+else
+    echo "echo -e "Data is already loaded ... $Y SKIPPING $s""
+
+echo "checking whethaer that ctaalogeu is connecting to mongodb or not ..."
+telnet mongodb.tcloudguru.in 27017 &>> "$LOG_FILES"
+validate $? "connection "
 
 
