@@ -31,10 +31,10 @@ do
       --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name}]" \
       --query 'Instances[0].InstanceId' \
       --output text)
-
+ 
     # Wait until the instance is running
     aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
-
+    
     # Fetch public and private IPs
     PRIVATE_IP=$(aws ec2 describe-instances \
       --instance-ids "$INSTANCE_ID" \
@@ -45,6 +45,33 @@ do
       --instance-ids "$INSTANCE_ID" \
       --query "Reservations[0].Instances[0].PublicIpAddress" \
       --output text)
+
+    # Inside your for loop, after you fetch the IPs...
+
+    # Determine which IP to assign to DNS
+    if [ "$name" == "frontend" ]; 
+    then
+        DNS_IP="$PUBLIC_IP"
+    else
+        DNS_IP="$PRIVATE_IP"
+    fi
+
+    # Create DNS record for this instance
+    aws route53 change-resource-record-sets --hosted-zone-id "$ZONE_ID" --change-batch '{
+    "Changes": [{
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+        "Name": "'$name'.'$DOMAIN_NAME'",
+        "Type": "A",
+        "TTL": 300,
+        "ResourceRecords": [{
+            "Value": "'$DNS_IP'"
+        }]
+        }
+    }]
+    }'
+
+        
 
     # Output the results with color
     echo -e "${g}Instance launched successfully:${s} $name"
