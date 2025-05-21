@@ -100,6 +100,4 @@ else
     echo -e "${g}Data is already loaded ... ${y}SKIPPING${s}"
 fi
 
-echo -e "${y}Checking if catalogue can connect to MongoDB...${s}"
-telnet mongodb.tcloudguru.in 27017 &>> "$LOG_FILES"
-validate $? "MongoDB connection check"
+echo "$m catalogue part completed"
