@@ -18,7 +18,7 @@ DOMAIN_NAME="tcloudguru.in"        # Replace with your domain name
 INSTANCES=("mongodb" "redis" "mysql" "rabbitmq" "catalogue" "user" "cart" "shipping" "payment" "dispatch" "frontend")
 
 # Launch the instances
-echo -e "${y}⏳ Launching ${g}11${y} instances... This may take a little bit of time. Please wait.${s}"
+echo -e "${y}⏳ Launching ${g}instances... This may take a little bit of time. Please wait.${s}"
 
 for name in $@; #${INSTANCES[@]} //all instances at once
 do
@@ -69,7 +69,7 @@ do
     }"
 
     # Output the results with color
-    echo -e "${g}Instance launched successfully:${s} $name"
+    echo -e "$name:${g}Instance launched successfully:${s} "
     echo -e "${m}$name Private IP:${s} $PRIVATE_IP"
     echo -e "${m}$name Public IP:${s} $PUBLIC_IP"
     echo -e "${r}$name${s} : $DNS_IP"
