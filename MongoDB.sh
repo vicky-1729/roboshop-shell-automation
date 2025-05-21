@@ -22,7 +22,7 @@ log_files="${log_folder}/${script_name}.log"
 
 # Create the log folder if it doesn't exist
 mkdir -p $log_folder
-
+echo "printing the current time $(date)"
 # Validation function
 validate() {
     if [ "$1" -eq 0 ]; then
