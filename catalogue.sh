@@ -27,9 +27,9 @@ mkdir -p "$LOG_FOLDER"
 # Function to validate each step
 validate() {
     if [ "$1" -eq 0 ]; then
-        echo -e "${g}$2 is success ...!${s}" | tee -a "$LOG_FILES"
+        echo -e "$2 is ${g}success ...!${s}" | tee -a "$LOG_FILES"
     else
-        echo -e "${r}$2 is failure ...!${s}" | tee -a "$LOG_FILES"
+        echo -e "$2 is ${r}failure ...!${s}" | tee -a "$LOG_FILES"
     fi
 }
 
