@@ -100,4 +100,4 @@ else
     echo -e "${g}Data is already loaded ... ${y}SKIPPING${s}"
 fi
 
-echo "$m catalogue part completed"
+echo -e "${m} catalogue part completed"
