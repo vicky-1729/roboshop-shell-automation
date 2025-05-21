@@ -11,7 +11,7 @@ s="\e[0m"    # Reset
 if [ "$(id -u)" -eq 0 ]; then
     echo -e "You are a ${r}root${s} user. You can directly run the script."
 else
-    echo -e "You are ${r}not a root user${s}. Please run the script with ${r}sudo${s}."
+    echo -e "You are not a ${r}root user${s}. Please run the script with ${r}sudo${s}."
     exit 1
 fi
 
