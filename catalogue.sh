@@ -31,6 +31,7 @@ validate() {
         echo "$2 is success ...!" | tee -a "$log_files"
     else
         echo "$2 is failure ...!" | tea -a "$log_files"
+    fi
 }
 
 echo "disbaling nodejs...."
