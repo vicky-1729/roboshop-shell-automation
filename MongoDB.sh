@@ -22,14 +22,14 @@ fi
 validate (){
     if [ "$1" -eq 0 ]
     then
-       echo "$2 is ${g} success..! ${s}"
+       echo -e "$2 is ${g} success..! ${s}"
     else
-       echo "$2 is ${r} failed..! ${s}"
+       echo -e "$2 is ${r} failed..! ${s}"
        exit 1
     fi
 }
 
-cp /repos/mongo.repo /etc/yum.repos.d/mongodb.repo
+cp repos/mongo.repo /etc/yum.repos.d/mongodb.repo
 validate $? "creating repo file"
 
 dnf install mongodb-org -y 
