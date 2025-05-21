@@ -20,9 +20,9 @@ DOMAIN_NAME="tcloudguru.in"        # Replace with your domain name
 INSTANCES=("mongodb" "redis" "mysql" "rabbitmq" "catalogue" "user" "cart" "shipping" "payment" "dispatch" "frontend")
 
 # Launch the instances
-echo "launching ${g}11${s} instances. This will take a little bit of time..."
+echo -e "${y}⏳ Launching ${g}11${y} instances... This may take a little bit of time. Please wait.${s}"
 
-for name in $@; 
+for name in $@; #${INSTANCES[@]} //all instances at once
 do
     # Launch EC2 instance
     INSTANCE_ID=$(aws ec2 run-instances \
