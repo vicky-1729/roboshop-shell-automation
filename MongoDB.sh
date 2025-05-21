@@ -16,21 +16,20 @@ else
 fi
 
 # Log folder setup
-log_folder="/var/log/roboshop-logs"  # Use absolute path
-script_name=$(basename "$0" .sh)      # Extract the script name without extension
-log_files="${log_folder}/${script_name}.log"
+LOG_FOLDER="/var/log/roboshop-logs"  # Log directory path
+SCRIPT_NAME=$(basename "$0" .sh)     # Extract script name without .sh extension
+LOG_FILES="${LOG_FOLDER}/${SCRIPT_NAME}.log"  # Full log file path
 
 # Create the log folder if it doesn't exist
-mkdir -p $log_folder
-echo "printing the current time $(date)"
-
+mkdir -p $LOG_FOLDER
+echo -e "${y}Printing the current time: $(date)${s}"  # Print timestamp
 
 # Validation function
 validate() {
     if [ "$1" -eq 0 ]; then
-        echo -e "$2 is ${g}success!${s}" | tee -a "$log_files"
+        echo -e "$2 is ${g}success!${s}" | tee -a "$LOG_FILES"
     else
-        echo -e "$2 is ${r}failed!${s}" | tee -a "$log_files"
+        echo -e "$2 is ${r}failed!${s}" | tee -a "$LOG_FILES"
         exit 1
     fi
 }
@@ -38,35 +37,34 @@ validate() {
 # Begin installation steps
 
 # Step 1: Copy MongoDB repo file
-echo -e "Creating MongoDB repo file..."
-cp repos/mongo.repo /etc/yum.repos.d/mongodb.repo &>>$log_files
+echo -e "${y}Creating MongoDB repo file...${s}"
+cp repos/mongo.repo /etc/yum.repos.d/mongodb.repo &>>$LOG_FILES
 validate $? "Creating MongoDB repo file"
 
 # Step 2: Install MongoDB
-echo -e "Installing MongoDB..."
-dnf install mongodb-org -y &>>$log_files
+echo -e "${y}Installing MongoDB...${s}"
+dnf install mongodb-org -y &>>$LOG_FILES
 validate $? "Installing MongoDB"
 
 # Step 3: Enable MongoDB to start on boot
-echo -e "Enabling MongoDB to start on boot..."
-systemctl enable mongod &>>$log_files
+echo -e "${y}Enabling MongoDB to start on boot...${s}"
+systemctl enable mongod &>>$LOG_FILES
 validate $? "Enabling MongoDB"
 
 # Step 4: Start MongoDB service
-echo -e "Starting MongoDB service..."
-systemctl start mongod &>>$log_files
+echo -e "${y}Starting MongoDB service...${s}"
+systemctl start mongod &>>$LOG_FILES
 validate $? "Starting MongoDB"
 
 # Step 5: Update MongoDB config file to allow external connections
-echo -e "Updating MongoDB config to allow connections from all IPs..."
-sed -i "s/127.0.0.1/0.0.0.0/g" /etc/mongod.conf &>>$log_files
+echo -e "${y}Updating MongoDB config to allow connections from all IPs...${s}"
+sed -i "s/127.0.0.1/0.0.0.0/g" /etc/mongod.conf &>>$LOG_FILES
 validate $? "Updating MongoDB config file"
 
 # Step 6: Restart MongoDB service to apply changes
-echo -e "Restarting MongoDB service..."
-systemctl restart mongod &>>$log_files
+echo -e "${y}Restarting MongoDB service...${s}"
+systemctl restart mongod &>>$LOG_FILES
 validate $? "Restarting MongoDB"
 
 # Final message
 echo -e "${m}MongoDB ${g}installation and setup completed successfully!${s}"
-
