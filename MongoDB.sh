@@ -19,20 +19,25 @@ else
 fi
 
 
+
+log_folder="var/log/roboshop-logs"
+script_name=$(echo $0 | cut -d '.' -f1) 
+log_files="${log_folder}/${script_name}.log"
+
 validate (){
     if [ "$1" -eq 0 ]
     then
-       echo -e "$2 is ${g} success..! ${s}"
+       echo -e "$2 is ${g} success..! ${s}" | tee -a "log_files"
     else
-       echo -e "$2 is ${r} failed..! ${s}"
+       echo -e "$2 is ${r} failed..! ${s}"  | tee -a "log_files"
        exit 1
     fi
 }
 
-cp repos/mongo.repo /etc/yum.repos.d/mongodb.repo
+cp repos/mongo.repo /etc/yum.repos.d/mongodb.repo &>>$log_files
 validate $? "creating repo file"
 
-dnf install mongodb-org -y 
+dnf install mongodb-org -y &>>$log_files
 validate $? "installing mongodb"
 
 systemctl enable mongod 
