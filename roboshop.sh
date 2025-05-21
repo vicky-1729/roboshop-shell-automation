@@ -21,7 +21,7 @@ INSTANCES=("mongodb" "redis" "mysql" "rabbitmq" "catalogue" "user" "cart" "shipp
 
 # Launch the instances
 echo "lanuching ${g}11${s} instance so it will take little bit time"
-for name in "${INSTANCES[@]}"; 
+for name in $@; 
 do
     # Launch EC2 instance
     INSTANCE_ID=$(aws ec2 run-instances \
