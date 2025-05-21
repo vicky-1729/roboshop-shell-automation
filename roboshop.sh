@@ -63,7 +63,7 @@ do
         "ResourceRecordSet": {
         "Name": "'$name'.'$DOMAIN_NAME'",
         "Type": "A",
-        "TTL": 300,
+        "TTL": 1,         
         "ResourceRecords": [{
             "Value": "'$DNS_IP'"
         }]
@@ -77,6 +77,7 @@ do
     echo -e "${g}Instance launched successfully:${s} $name"
     echo -e "${m}$name Private IP:${s} $PRIVATE_IP"
     echo -e "${m}$name Public IP:${s} $PUBLIC_IP"
+    echo -e "${r}$name${s} : $DNS_IP"
 
 done
 
