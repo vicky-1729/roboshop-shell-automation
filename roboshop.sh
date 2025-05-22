@@ -32,9 +32,17 @@ do
       --query 'Instances[0].InstanceId' \
       --output text)
 
+    if [ "$?" -eq 0 ]
+    then
+      echo -e "$name:${g}Instance launched successfully:${s} "
+    else
+       echo -e "$name:${r}Instance launched failure:${s} "
+       exit 1
     # Wait until the instance state becomes "running"
     aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
     
+   
+
     # Get the private IP of the instance
     PRIVATE_IP=$(aws ec2 describe-instances \
       --instance-ids "$INSTANCE_ID" \
@@ -71,7 +79,7 @@ do
     }"
 
     # Display instance launch result
-    echo -e "$name:${g}Instance launched successfully:${s} "
+    
     echo -e "${m}$name Private IP:${s} $PRIVATE_IP"
     echo -e "${m}$name Public IP:${s} $PUBLIC_IP"
     echo -e "${r}$name${s} : $DNS_IP"
