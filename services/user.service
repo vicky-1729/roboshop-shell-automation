@@ -4,7 +4,7 @@ Description = User Service
 User=roboshop
 Environment=MONGO=true
 // highlight-start
-Environment=REDIS_URL='redis://<REDIS-IP-ADDRESS>:6379'
+Environment=REDIS_URL='redis://redis.tcloudguru.in:6379'
 Environment=MONGO_URL="mongodb://mongodb.tscloudguru.in:27017/users"
 // highlight-end
 ExecStart=/bin/node /app/server.js
