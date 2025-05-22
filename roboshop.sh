@@ -62,7 +62,7 @@ do
         \"ResourceRecordSet\": {
           \"Name\": \"${name}.${DOMAIN_NAME}\",
           \"Type\": \"A\",
-          \"TTL\": 60,
+          \"TTL\": 1,
           \"ResourceRecords\": [{
             \"Value\": \"${DNS_IP}\"
           }]
