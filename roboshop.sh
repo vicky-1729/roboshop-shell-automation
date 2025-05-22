@@ -34,9 +34,9 @@ do
 
     if [ "$?" -eq 0 ]
     then
-      echo -e "$name:${g}Instance launched successfully:${s} "
+      echo -e "$name:${m}Instance launched ${g}successfully:${s} "
     else
-       echo -e "$name:${r}Instance launched failure:${s} "
+       echo -e "$name:${m}Instance launched ${r}failure:${s} "
        exit 1
     fi
     # Wait until the instance state becomes "running"
