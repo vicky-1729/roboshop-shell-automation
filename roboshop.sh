@@ -32,13 +32,6 @@ do
       --query 'Instances[0].InstanceId' \
       --output text)
 
-    if [ "$INSTANCE_ID" -eq 0 ]
-    then
-        echo -e "$name:${m}Instance launched ${g}successfully${s}"
-    else
-        echo -e "$name:${m}Instance launch ${r}failed${s}"
-        exit 1
-    fi
 
     # Wait until the instance state becomes "running"
     aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
