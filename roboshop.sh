@@ -38,6 +38,7 @@ do
     else
        echo -e "$name:${r}Instance launched failure:${s} "
        exit 1
+    fi
     # Wait until the instance state becomes "running"
     aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
     
