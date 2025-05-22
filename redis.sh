@@ -58,6 +58,10 @@ echo -e "${y}Updating Redis configuration 127.0.0.0. to 0.0.0.0 ...${s}"
 sed -i "s/127.0.0.1/0.0.0.0/g" /etc/redis/redis.conf &>> "$LOG_FILES"
 validate $? "Redis config update"
 
+#protection mode on usally we need to turn it off
+sed -i 's/^protected-mode yes/protected-mode no/' /etc/redis/redis.conf
+validate $? "Proctedmode turn off"
+
 # Enable Redis service
 echo -e "${y}Enabling Redis service...${s}"
 
