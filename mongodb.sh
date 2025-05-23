@@ -1,7 +1,6 @@
 #!/bin/bash
 
 
-
 # Color codes
 set -e
 
@@ -13,38 +12,42 @@ m="\033[35m"   # Magenta
 reset="\033[0m"  # Reset
 
 
-# Check if the script is being run as the root user
-if [ "$(id -u)" -eq 0 ]
+USERID=$(id -u)
+
+LOGS_FOLDER="/var/log/roboshop-logs"
+SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+
+mkdir -p $LOGS_FOLDER
+echo "Script started executing at: $(date)" | tee -a $LOG_FILE
+
+
+# check the user has root priveleges or not
+if [ $USERID -ne 0 ]
 then
-    echo -e "${g}✔ Running as root user.${reset}" | tee -a "$LOG_FILE"
+    echo -e "$r ERROR:: Please run this script with root access $reset" | tee -a $LOG_FILE
+    exit 1 #give other than 0 upto 127
 else
-    echo -e "${r}✖ Error:${reset} This script must be run as root. Please use sudo or switch to the root user." | tee -a "$LOG_FILE"
-    exit 1
+    echo -e "You are running with $g root access $reset " | tee -a $LOG_FILE
 fi
-#creating the folder for logs
-LOG_FOLDER="/var/log/roboshop-logs"
-SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
-LOG_FILE="$LOG_FOLDER/$SCRIPT_NAME.log"
-S_DIR="$PWD"
 
-mkdir -p "$LOG_FOLDER"
-
-# Function to validate the exit status of commands and print appropriate messages
-VALIDATE() {
-    if [ "$1" -eq 0 ]; then
-        echo -e "${g}✔ $2 succeeded.${reset}" | tee -a "$LOG_FILE"
+# validate functions takes input as exit status, what command they tried to install
+VALIDATE(){
+    if [ $1 -eq 0 ]
+    then
+        echo -e "$2 is ... $g SUCCESS $reset" | tee -a $LOG_FILE
     else
-        echo -e "${r}✖ $2 failed.${reset}" | tee -a "$LOG_FILE"
+        echo -e "$2 is ... $r FAILURE $reset" | tee -a $LOG_FILE
         exit 1
     fi
 }
 
 
 
-cp $S_DIR/repo_config/mongo.repo /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
+cp $S_DIR/repo_config/mongo.repo /etc/yum.repos.d/mongodb.repo &>> $LOG_FILE
 VALIDATE $? "Copying MongoDB repo file"
 
-dnf install mongodb-org -y &>> "$LOG_FILE"
+dnf install mongodb-org -y &>> $LOG_FILE
 VALIDATE $? "Installing mongodb server"
 
 
@@ -52,10 +55,10 @@ systemctl enable mongod
 systemctl start mongod
 VALIDATE $? "Starting mongodb server"
 
-systemctl status mongod | grep Active &>> "$LOG_FILE"
+systemctl status mongod | grep Active &>> $LOG_FILE
 VALIDATE $? "checking mongodb server is running"
 
-sed -i "s/127.0.0.1/0.0.0.0/g" /etc/mongod.conf &>> "$LOG_FILE"
+sed -i "s/127.0.0.1/0.0.0.0/g" /etc/mongod.conf &>> $LOG_FILE
 
 systemctl restart mongod
 VALIDATE $? "restarting mongodb server"
