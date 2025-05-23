@@ -38,7 +38,7 @@ VALIDATE() {
 }
 
 #maven installation
-dnf install maven -y
+dnf install maven -y &>> "$LOG_FILE"
 VALIDATE $? "installation of maven"
 
 # roboshop user setup
@@ -50,7 +50,7 @@ else
 fi
 
 # Application setup
-mkdir -p /app &>> "$LOG_FILE"
+mkdir -p /app &>> "$LOG_FILE" &>> "$LOG_FILE"
 VALIDATE $? "Creating /app directory"
 
 rm -rf /app/* &>> "$LOG_FILE"
