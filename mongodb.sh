@@ -16,7 +16,7 @@ reset="\033[0m"  # Reset
 LOG_FOLDER="/var/log/roboshop-logs"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 LOGS_FILE="$LOG_FOLDER/$SCRIPT_NAME.log"
-S_DIR=$(PWD)
+S_DIR="$PWD"
 
 mkdir -p $LOG_FOLDER 
 
