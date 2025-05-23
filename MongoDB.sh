@@ -67,4 +67,4 @@ systemctl restart mongod &>>$LOG_FILES
 validate $? "Restarting MongoDB"
 
 # Final message
-echo -e "${m}MongoDB ${g}installation and setup completed successfully!${s}"
+echo -e "${m}MongoDB ${g}installation and setup completed successfully${s}"
