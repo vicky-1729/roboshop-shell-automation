@@ -37,17 +37,19 @@ VALIDATE() {
 }
 
 # Node.js installation
-dnf module disable nodejs -y
+dnf module disable nodejs -y &>> "$LOG_FILE"
 VALIDATE $? "Disabling existing Node.js module"
 
-dnf module enable nodejs:20 -y
+dnf module enable nodejs:20 -y &>> "$LOG_FILE"
 VALIDATE $? "Enabling Node.js 20 module"
 
-dnf install nodejs -y
+dnf install nodejs -y &>> "$LOG_FILE"
 VALIDATE $? "Installing Node.js 20"
 
 # Create roboshop user if not exists
-if id roboshop &>/dev/null; then
+id roboshop
+if [ "$?" eq 0 ] 
+then
     echo -e "roboshop user is ${g}already created${y} ... skipping${reset}"
 else
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> "$LOG_FILE"
