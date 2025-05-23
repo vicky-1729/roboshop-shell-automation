@@ -12,92 +12,86 @@ m="\033[35m"   # Magenta
 reset="\033[0m"  # Reset
 
 USERID=$(id -u)
-
 LOGS_FOLDER="/var/log/roboshop-logs"
 SCRIPT_NAME=$(basename "$0" .sh)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
-
-# Set script directory
 S_DIR=$(dirname "$0")
 
-
 # Create log directory if it doesn't exist
-mkdir -p $LOGS_FOLDER
+mkdir -p "$LOGS_FOLDER"
 
 # Check for root privileges
-if [ $USERID -ne 0 ]
-then
-    echo -e "${r}ERROR:: Please run this script with root access${reset}" | tee -a $LOG_FILE
+if [ "$USERID" -ne 0 ]; then
+    echo -e "${r}ERROR:: Please run this script with root access${reset}" | tee -a "$LOG_FILE"
     exit 1
 fi
 
-
 # Validation function
 VALIDATE() {
-    if [ $1 -eq 0 ]; then
-        echo -e "$2 ... ${g}SUCCESS${reset}" | tee -a $LOG_FILE
+    if [ "$1" -eq 0 ]; then
+        echo -e "$2 ... ${g}SUCCESS${reset}" | tee -a "$LOG_FILE"
     else
-        echo -e "$2 ... ${r}FAILURE${reset}" | tee -a $LOG_FILE
+        echo -e "$2 ... ${r}FAILURE${reset}" | tee -a "$LOG_FILE"
         exit 1
     fi
 }
 
-# nodejs module installtion
+# Node.js installation
 dnf module disable nodejs -y
-VALIDATE $? "disabling nodejs"
+VALIDATE $? "Disabling existing Node.js module"
 
 dnf module enable nodejs:20 -y
-VALIDATE $? "enabling nodejs"
+VALIDATE $? "Enabling Node.js 20 module"
 
 dnf install nodejs -y
-VALIDATE $? "installing nodejs:20"
+VALIDATE $? "Installing Node.js 20"
 
-# creating the robo application
-roboshop id &>> $LOG_FILE
-if [ "$?" -eq 0 ]
-then
-    echo -e "roboshop user  is $g  already created $y skipping $reset"
+# Create roboshop user if not exists
+if id roboshop &>/dev/null; then
+    echo -e "roboshop user is ${g}already created${y} ... skipping${reset}"
 else
-    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> $LOG_FILE
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> "$LOG_FILE"
     VALIDATE $? "Creating roboshop system user"
 fi
 
-mkdir -p /app  &>> $LOG_FILE
-VALIDATE $? "creating app folder" 
+# Application setup
+mkdir -p /app &>> "$LOG_FILE"
+VALIDATE $? "Creating /app directory"
 
-curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>> $LOG_FILE
-VALIDATE $? "downloading the catalogue.zip file"
+curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>> "$LOG_FILE"
+VALIDATE $? "Downloading catalogue.zip"
 
-cd /app 
-unzip /tmp/catalogue.zip &>> $LOG_FILE
-VALIDATE $? "unzipping the catalogue file "
+cd /app
+unzip /tmp/catalogue.zip &>> "$LOG_FILE"
+VALIDATE $? "Unzipping catalogue.zip"
 
-npm install &>> $LOG_FILE
-VALIDATE $? "installing the dependices"
+npm install &>> "$LOG_FILE"
+VALIDATE $? "Installing Node.js dependencies"
 
-cp $S_DIR/service/catalogue.service /etc/systemd/system/catalogue.service &>> $LOG_FILE
-VALIDATE $? "catalogue service creation"
+cp "$S_DIR/service/catalogue.service" /etc/systemd/system/catalogue.service &>> "$LOG_FILE"
+VALIDATE $? "Copying catalogue service file"
 
 systemctl daemon-reload
-VALIDATE $? "system reloaded"
+VALIDATE $? "Reloading systemd"
 
-systemctl enable catalogue 
-VALIDATE $? "enabling service"
+systemctl enable catalogue
+VALIDATE $? "Enabling catalogue service"
 
 systemctl start catalogue
-VALIDATE $? "start service"
+VALIDATE $? "Starting catalogue service"
 
-cp $S_DIR/repo_config/mongo.repo /etc/yum.repos.d/mongodb.repo &>> $LOG_FILE
+# MongoDB client setup
+cp "$S_DIR/repo_config/mongo.repo" /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
 VALIDATE $? "Copying MongoDB repo file"
 
 dnf install mongodb-mongosh -y
-VALIDATE $? "installing the mongodb client server"
+VALIDATE $? "Installing MongoDB shell"
 
-STATUS=$(mongosh --host mongodb.daws84s.site --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
-if [ $STATUS -lt 0 ]
-then
-    mongosh --host mongodb.tcloudguru.in </app/db/master-data.js &>> $LOG_FILE
+# Load data into MongoDB if not already present
+STATUS=$(mongosh --host mongodb.daws84s.site --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+if [ "$STATUS" -lt 0 ]; then
+    mongosh --host mongodb.tcloudguru.in </app/db/master-data.js &>> "$LOG_FILE"
     VALIDATE $? "Loading data into MongoDB"
 else
-    echo -e "Data is already loaded ... $y SKIPPING $reset"
+    echo -e "Data is already loaded ... ${y}SKIPPING${reset}"
 fi
