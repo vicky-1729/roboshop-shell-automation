@@ -54,19 +54,19 @@ systemctl start nginx &>> "$LOG_FILE"
 VALIDATE $? "Starting nginx service"
 
 
-rm -rf /usr/share/nginx/html/* 
+rm -rf /usr/share/nginx/html/* &>> "$LOG_FILE"
 VALIDATE $? "removed default content"
 
-curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>> "$LOG_FILE"
 VALIDATE $? "downloading the frontend zip file"
 
 cd /usr/share/nginx/html 
-unzip /tmp/frontend.zip
+unzip /tmp/frontend.zip &>> "$LOG_FILE"
 VALIDATE $? "unzipping the frontend file"
 
-cp $S_DIR/nginx.conf /etc/nginx/nginx.conf
+cp $S_DIR/repo_config/nginx.conf /etc/nginx/nginx.conf &>> "$LOG_FILE"
 VALIDATE $? "nginx configuration "
 
-systemctl restart nginx 
+systemctl restart nginx &>> "$LOG_FILE"
 VALIDATE $? "restarting nginx service"
 
