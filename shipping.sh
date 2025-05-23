@@ -81,7 +81,7 @@ VALIDATE $? "shipping service start "
 dnf install mysql -y &>> "$LOG_FILE"
 VALIDATE $? "installing mysql "
 # Check if the 'cities' database exists and load data if not
-mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 -e 'SHOW DATABASES LIKE "cities";' &>> "$LOG_FILE"
+mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 -e 'use cities' &>>$LOG_FILE
 if [ $? -ne 0 ]; then
     mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 -e 'CREATE DATABASE IF NOT EXISTS cities;' &>> "$LOG_FILE"
     mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 cities < /app/db/schema.sql &>> "$LOG_FILE"
