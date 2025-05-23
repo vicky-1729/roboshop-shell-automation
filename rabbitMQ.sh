@@ -38,7 +38,7 @@ VALIDATE() {
 }
 
 
-cp /repo_config/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo &>> "LOG_FILE"
+cp repo_config/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo &>> "LOG_FILE"
 VALIDATE $? "rabbitMQ repo adding"
 
 
