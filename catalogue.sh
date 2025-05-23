@@ -61,7 +61,7 @@ mkdir -p /app &>> "$LOG_FILE"
 VALIDATE $? "Creating /app directory"
 
 rm -rf /app/* &>> "$LOG_FILE"
-validate $? "Cleaning /app directory"
+
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>> "$LOG_FILE"
 VALIDATE $? "Downloading catalogue.zip"
