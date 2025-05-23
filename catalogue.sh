@@ -11,16 +11,17 @@ b="\033[34m"   # Blue
 m="\033[35m"   # Magenta
 reset="\033[0m"  # Reset
 
+# Variables
 USERID=$(id -u)
 LOGS_FOLDER="/var/log/roboshop-logs"
 SCRIPT_NAME=$(basename "$0" .sh)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 S_DIR=$(dirname "$0")
 
-# Create log directory if it doesn't exist
+# Create log directory
 mkdir -p "$LOGS_FOLDER"
 
-# Check for root privileges
+# Root privilege check
 if [ "$USERID" -ne 0 ]; then
     echo -e "${r}ERROR:: Please run this script with root access${reset}" | tee -a "$LOG_FILE"
     exit 1
@@ -36,7 +37,7 @@ VALIDATE() {
     fi
 }
 
-# Node.js installation
+# Node.js setup
 dnf module disable nodejs -y &>> "$LOG_FILE"
 VALIDATE $? "Disabling existing Node.js module"
 
@@ -46,9 +47,9 @@ VALIDATE $? "Enabling Node.js 20 module"
 dnf install nodejs -y &>> "$LOG_FILE"
 VALIDATE $? "Installing Node.js 20"
 
-# Create roboshop user if not exists
+# roboshop user setup
 if id roboshop &>/dev/null; then
-    echo -e "roboshop user is ${g}already created${y} ... skipping${reset}"
+    echo -e "roboshop user is ${g}already created${y} ... skipping${reset}" | tee -a "$LOG_FILE"
 else
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> "$LOG_FILE"
     VALIDATE $? "Creating roboshop system user"
@@ -70,7 +71,8 @@ VALIDATE $? "Unzipping catalogue.zip"
 npm install &>> "$LOG_FILE"
 VALIDATE $? "Installing Node.js dependencies"
 
-cp $S_DIR/service/catalogue.service /etc/systemd/system/catalogue.service &>> "$LOG_FILE"
+# Service setup
+cp "$S_DIR/service/catalogue.service" /etc/systemd/system/catalogue.service &>> "$LOG_FILE"
 VALIDATE $? "Copying catalogue service file"
 
 systemctl daemon-reload &>> "$LOG_FILE"
@@ -83,14 +85,14 @@ systemctl start catalogue &>> "$LOG_FILE"
 VALIDATE $? "Starting catalogue service"
 
 # MongoDB client setup
-cp $S_DIR/repo_config/mongo.repo /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
+cp "$S_DIR/repo_config/mongo.repo" /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
 VALIDATE $? "Copying MongoDB repo file"
 
 dnf install mongodb-mongosh -y &>> "$LOG_FILE"
 VALIDATE $? "Installing MongoDB shell"
 
 # Load data into MongoDB if not already present
-STATUS=$(mongosh --host mongodb.tcloudguru.in --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+STATUS=$(mongosh --host mongodb.daws84s.site --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
 if [ "$STATUS" -lt 0 ]; then
     mongosh --host mongodb.tcloudguru.in </app/db/master-data.js &>> "$LOG_FILE"
     VALIDATE $? "Loading data into MongoDB"
