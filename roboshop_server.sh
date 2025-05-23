@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#color codes
-r="\e[31m"
-g="\e[32m"
-y="\e[33m"
-b="\e[34m"
-m="\e[35m"
-s="\e[37m"
+# Color codes
+r="\e[31m"   # Red
+g="\e[32m"   # Green
+y="\e[33m"   # Yellow
+b="\e[34m"   # Blue
+m="\e[35m"   # Magenta
+reset="\e[0m"  # Reset
 
 # CONFIG
 AMI_ID="ami-09c813fb71547fc4f"
@@ -16,10 +16,9 @@ DOMAIN_NAME="tcloudguru.in"
 INSTANCES=("mongodb" "catalogue" "user" "dispatch" "frontend" "payment" "shipping" "rabbitmq" "mysql" "cart" "redis")
 
 # LOOP
-#for instance in "${INSTANCES[@]}"
-for instance in $@
+for instance in "$@"
 do
-  echo -e "Launching ${y}$instance...${s}"
+  echo -e "Launching ${y}$instance...${reset}"
   INSTANCE_ID=$(aws ec2 run-instances \
     --image-id $AMI_ID \
     --instance-type t3.micro \
@@ -42,7 +41,7 @@ do
     IP="$PRIVATE_IP"
   fi
 
-  echo -e "$instance → ${r}Public IP:${s} $PUBLIC_IP | ${r}Private IP:${s} $PRIVATE_IP"
+  echo -e "$instance → ${r}Public IP:${reset} $PUBLIC_IP | ${r}Private IP:${reset} $PRIVATE_IP"
 
   aws route53 change-resource-record-sets --hosted-zone-id $ZONE_ID --change-batch "{
     \"Comment\": \"DNS update for $RECORD_NAME\",
@@ -57,6 +56,6 @@ do
     }]
   }"
 
-  echo -e "${y}$instance DNS record updated → ${r}$RECORD_NAME → ${g}$IP${s}"
-  echo -e "${m}---------------------------------------------"
+  echo -e "${y}$instance DNS record updated → ${r}$RECORD_NAME → ${g}$IP${reset}"
+  echo -e "${m}---------------------------------------------${reset}"
 done
