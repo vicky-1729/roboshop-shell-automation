@@ -21,7 +21,7 @@ S_DIR="$PWD"
 mkdir -p "$LOG_FOLDER"
 
 # Check if the script is being run as the root user
-if [ "$(id -u)" -eq 0 ];
+if [ "$(id -u)" -eq 0 ]
 then
     echo -e "${g}✔ Running as root user.${reset}" | tee -a "$LOG_FILE"
 else
