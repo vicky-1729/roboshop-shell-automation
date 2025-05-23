@@ -11,10 +11,13 @@ b="\033[34m"   # Blue
 m="\033[35m"   # Magenta
 reset="\033[0m"  # Reset
 
+
+# Variables
 USERID=$(id -u)
 LOGS_FOLDER="/var/log/roboshop-logs"
-SCRIPT_NAME=$(basename "$0" .sh)
+SCRIPT_NAME=$(echo "$0" | cut -d '.' -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+S_DIR=$PWD
 
 # Create log directory if it doesn't exist
 mkdir -p $LOGS_FOLDER
