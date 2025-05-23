@@ -19,7 +19,7 @@ fi
 LOG_FOLDER="/var/log/roboshop-logs"
 SCRIPT_NAME=$(echo $0 | cut -d "." -f1)
 LOG_FILES="$LOG_FOLDER/$SCRIPT_NAME.log"
-script_dir=$PWD
+S_DIR=$PWD
 
 # Making directory for logs
 mkdir -p "$LOG_FOLDER"
@@ -86,7 +86,7 @@ validate $? "Frontend zip file unzip"
 # Copy custom Nginx configuration file
 echo -e "${y}Copying custom Nginx configuration file...${s}"
 
-cp $script_dir/repos/nginx.conf /etc/nginx/nginx.conf &>> "$LOG_FILES"
+cp $S_DIR/repos/nginx.conf /etc/nginx/nginx.conf &>> "$LOG_FILES"
 validate $? "Custom Nginx configuration file copy"
 
 # Restart Nginx service
