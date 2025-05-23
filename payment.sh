@@ -62,10 +62,10 @@ cd /app
 unzip /tmp/payment.zip &>> "$LOG_FILE"
 VALIDATE $? "Unzipping payment.zip"
 
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt &>> "$LOG_FILE" 
 VALIDATE $? "installing python requriement"
 
-cp $S_DIR/service/payment.service /etc/systemd/system/payment.service
+cp $S_DIR/service/payment.service /etc/systemd/system/payment.service &>> "$LOG_FILE"
 VALIDATE $? "payment service creation "
 
 systemctl daemon-reload
