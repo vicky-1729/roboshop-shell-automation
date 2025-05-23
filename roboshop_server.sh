@@ -39,7 +39,7 @@ for instance in "$@"; do
     IP="$PRIVATE_IP"
   fi
 
-  echo -e "$instance → ${r}Public IP:${reset} $PUBLIC_IP | ${r}Private IP:${reset} $PRIVATE_IP"
+  echo -e "$instance → ${g}Public IP:${reset} $PUBLIC_IP | ${g}Private IP:${reset} $PRIVATE_IP"
 
   aws route53 change-resource-record-sets --hosted-zone-id "$ZONE_ID" --change-batch "{
     \"Comment\": \"DNS update for $RECORD_NAME\",
