@@ -18,7 +18,7 @@ SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 LOGS_FILE="$LOG_FOLDER/$SCRIPT_NAME.log"
 S_DIR="$PWD"
 
-mkdir -p $LOG_FOLDER 
+mkdir -p "$LOG_FOLDER"
 
 # Check if the script is being run as the root user
 if [ "$(id -u)" -eq 0 ];
