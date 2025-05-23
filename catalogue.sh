@@ -70,7 +70,7 @@ VALIDATE $? "Unzipping catalogue.zip"
 npm install &>> "$LOG_FILE"
 VALIDATE $? "Installing Node.js dependencies"
 
-cp "$S_DIR/service/catalogue.service" /etc/systemd/system/catalogue.service &>> "$LOG_FILE"
+cp $S_DIR/service/catalogue.service /etc/systemd/system/catalogue.service &>> "$LOG_FILE"
 VALIDATE $? "Copying catalogue service file"
 
 systemctl daemon-reload &>> "$LOG_FILE"
@@ -83,7 +83,7 @@ systemctl start catalogue &>> "$LOG_FILE"
 VALIDATE $? "Starting catalogue service"
 
 # MongoDB client setup
-cp "$S_DIR/repo_config/mongo.repo" /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
+cp $S_DIR/repo_config/mongo.repo /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
 VALIDATE $? "Copying MongoDB repo file"
 
 dnf install mongodb-mongosh -y &>> "$LOG_FILE"
