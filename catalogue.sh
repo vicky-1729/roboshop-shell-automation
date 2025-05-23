@@ -92,7 +92,7 @@ dnf install mongodb-mongosh -y &>> "$LOG_FILE"
 VALIDATE $? "Installing MongoDB shell"
 
 # Load data into MongoDB if not already present
-STATUS=$(mongosh --host mongodb.daws84s.site --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+STATUS=$(mongosh --host mongodb.tcloudguru.in --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
 if [ "$STATUS" -lt 0 ]; then
     mongosh --host mongodb.tcloudguru.in </app/db/master-data.js &>> "$LOG_FILE"
     VALIDATE $? "Loading data into MongoDB"
