@@ -14,9 +14,9 @@ reset="\033[0m"  # Reset
 # Variables
 USERID=$(id -u)
 LOGS_FOLDER="/var/log/roboshop-logs"
-SCRIPT_NAME=$(basename "$0" .sh)
+SCRIPT_NAME=$(echo "$0" | cut -d '.' -f1)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
-S_DIR=$(dirname "$0")
+S_DIR=$PWD
 
 # Create log directory
 mkdir -p "$LOGS_FOLDER"
@@ -72,7 +72,7 @@ npm install &>> "$LOG_FILE"
 VALIDATE $? "Installing Node.js dependencies"
 
 # Service setup
-cp "$S_DIR/service/catalogue.service" /etc/systemd/system/catalogue.service &>> "$LOG_FILE"
+cp $S_DIR/service/catalogue.service /etc/systemd/system/catalogue.service &>> "$LOG_FILE"
 VALIDATE $? "Copying catalogue service file"
 
 systemctl daemon-reload &>> "$LOG_FILE"
@@ -85,7 +85,7 @@ systemctl start catalogue &>> "$LOG_FILE"
 VALIDATE $? "Starting catalogue service"
 
 # MongoDB client setup
-cp "$S_DIR/repo_config/mongo.repo" /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
+cp $S_DIR/repo_config/mongo.repo /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
 VALIDATE $? "Copying MongoDB repo file"
 
 dnf install mongodb-mongosh -y &>> "$LOG_FILE"
