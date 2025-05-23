@@ -81,15 +81,14 @@ VALIDATE $? "shipping service start "
 dnf install mysql -y &>> "$LOG_FILE"
 VALIDATE $? "installing mysql "
 
-mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 -e 'use cities' &>> "$LOG_FILE"
-if [ $? -ne 0 ]
-then
-    mysql -h mysql.tcloudguru.in -uroot -pRoboShop@1 < /app/db/schema.sql &>> "$LOG_FILE"
-    mysql -h mysql.tcloudguru.in -uroot -pRoboShop@1 < /app/db/app-user.sql &>> "$LOG_FILE"
-    mysql -h mysql.tcloudguru.in -uroot -pRoboShop@1 < /app/db/master-data.sql &>> "$LOG_FILE"
-    VALIDATE $? "data loading.."
+mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 -e 'USE cities;' &>> "$LOG_FILE"
+if [ $? -ne 0 ]; then
+    mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 < /app/db/schema.sql &>> "$LOG_FILE"
+    mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 < /app/db/app-user.sql &>> "$LOG_FILE"
+    mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 < /app/db/master-data.sql &>> "$LOG_FILE"
+    VALIDATE $? "Loading database data"
 else
-    echo -e "data is already loaded ,${y} skipping..!${reset}"
+    echo -e "Database data is ${y}already loaded${reset}, skipping..." | tee -a "$LOG_FILE"
 fi
 
 
