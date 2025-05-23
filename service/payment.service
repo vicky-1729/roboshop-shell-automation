@@ -1,0 +1,22 @@
+[Unit]
+Description=Payment Service
+
+[Service]
+User=root
+WorkingDirectory=/app
+// highlight-start
+Environment=CART_HOST=cart.tcloudguru.in
+Environment=CART_PORT=8080
+Environment=USER_HOST=user.tcloudguru.in
+Environment=USER_PORT=8080
+Environment=AMQP_HOST=rabbitmq.tcloudguru.in
+// highlight-end
+Environment=AMQP_USER=roboshop
+Environment=AMQP_PASS=roboshop123
+
+ExecStart=/usr/local/bin/uwsgi --ini payment.ini
+ExecStop=/bin/kill -9 $MAINPID
+SyslogIdentifier=payment
+
+[Install]
+WantedBy=multi-user.target
