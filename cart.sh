@@ -61,7 +61,7 @@ VALIDATE $? "Creating /app directory"
 
 rm -rf /app/* &>> "$LOG_FILE"
 
-curl -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>> "$LOG_FILE"
+curl -L -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>> "$LOG_FILE"
 VALIDATE $? "Downloading cart.zip"
 
 cd /app
