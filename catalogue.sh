@@ -48,7 +48,7 @@ VALIDATE $? "Installing Node.js 20"
 
 # Create roboshop user if not exists
 id roboshop
-if [ "$?" eq 0 ] 
+if [ "$?" -eq 0 ] 
 then
     echo -e "roboshop user is ${g}already created${y} ... skipping${reset}"
 else
