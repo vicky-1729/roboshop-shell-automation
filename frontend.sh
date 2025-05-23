@@ -86,7 +86,7 @@ validate $? "Frontend zip file unzip"
 # Copy custom Nginx configuration file
 echo -e "${y}Copying custom Nginx configuration file...${s}"
 
-cp $script_dir/nginx.conf /etc/nginx/nginx.conf &>> "$LOG_FILES"
+cp $script_dir/repos/nginx.conf /etc/nginx/nginx.conf &>> "$LOG_FILES"
 validate $? "Custom Nginx configuration file copy"
 
 # Restart Nginx service
