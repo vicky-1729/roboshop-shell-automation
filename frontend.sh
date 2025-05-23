@@ -1,99 +1,70 @@
 #!/bin/bash
 
 # Color codes
-r="\e[31m"   # Red
-g="\e[32m"   # Green
-y="\e[33m"   # Yellow
-m="\e[36m"   # Cyan 
-s="\e[0m"    # Reset
+R="\e[31m"   # Red
+G="\e[32m"   # Green
+Y="\e[33m"   # Yellow
+C="\e[36m"   # Cyan
+N="\e[0m"    # Reset
 
-# Check whether the user is root or not
-if [ $(id -u) -eq 0 ]; then
-    echo -e "You are a ${m}root user${s}, you can directly run the script."
-else
-    echo -e "You are ${r}not a root user${s}, please run the script using sudo."
+# Root privilege check
+USERID=$(id -u)
+if [ $USERID -ne 0 ]; then
+    echo -e "${R}ERROR:: Please run this script with root access${N}"
     exit 1
+else
+    echo -e "${C}You are running with root access${N}"
 fi
 
-# Log folder setup
-LOG_FOLDER="/var/log/roboshop-logs"
-SCRIPT_NAME=$( echo $0 | cut -d '.' -f1 )
-LOG_FILES="$LOG_FOLDER/$SCRIPT_NAME.log"
-S_DIR=$PWD
+# Log setup
+LOGS_FOLDER="/var/log/roboshop-logs"
+SCRIPT_NAME=$(basename "$0" .sh)
+LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
+SCRIPT_DIR=$PWD
+mkdir -p "$LOGS_FOLDER"
+echo "Script started executing at: $(date)" | tee -a "$LOG_FILE"
 
-# Making directory for logs
-mkdir -p "$LOG_FOLDER"
-
-# Function to validate each step with success/failure message
-validate() {
-    if [ "$1" -eq 0 ]; then
-        echo -e "$2 is ${g}success ...!${s}" | tee -a "$LOG_FILES"
+# Validation function
+VALIDATE() {
+    if [ $1 -eq 0 ]; then
+        echo -e "$2 ... ${G}SUCCESS${N}" | tee -a "$LOG_FILE"
     else
-        echo -e "$2 is ${r}failure ...!${s}" | tee -a "$LOG_FILES"
+        echo -e "$2 ... ${R}FAILURE${N}" | tee -a "$LOG_FILE"
         exit 1
-
     fi
 }
 
-# Disable default Nginx module
-echo -e "${y}Disabling Nginx module...${s}"
+# Nginx setup
+dnf module disable nginx -y &>>"$LOG_FILE"
+VALIDATE $? "Disabling default Nginx module"
 
-dnf module disable nginx -y &>> "$LOG_FILES"
-validate $? "Nginx disabling"
+dnf module enable nginx:1.24 -y &>>"$LOG_FILE"
+VALIDATE $? "Enabling Nginx:1.24 module"
 
-# Enable Nginx 1.24 module
-echo -e "${y}Enabling Nginx:1.24 module...${s}"
+dnf install nginx -y &>>"$LOG_FILE"
+VALIDATE $? "Installing Nginx"
 
-dnf module enable nginx:1.24 -y &>> "$LOG_FILES"
-validate $? "Nginx:1.24 enabling"
+systemctl enable nginx &>>"$LOG_FILE"
+systemctl start nginx &>>"$LOG_FILE"
+VALIDATE $? "Starting Nginx service"
 
-# Install Nginx
-echo -e "${y}Installing Nginx...${s}"
+rm -rf /usr/share/nginx/html/* &>>"$LOG_FILE"
+VALIDATE $? "Removing default Nginx content"
 
-dnf install nginx -y &>> "$LOG_FILES"
-validate $? "Nginx installation"
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>"$LOG_FILE"
+VALIDATE $? "Downloading frontend"
 
-# Enable and start Nginx service
-echo -e "${y}Starting the Nginx service...${s}"
+cd /usr/share/nginx/html || exit
+unzip /tmp/frontend.zip &>>"$LOG_FILE"
+VALIDATE $? "Unzipping frontend"
 
-systemctl enable nginx &>> "$LOG_FILES"
-validate $? "Nginx service enable"
+rm -f /etc/nginx/nginx.conf &>>"$LOG_FILE"
+VALIDATE $? "Removing default nginx.conf"
 
-systemctl start nginx &>> "$LOG_FILES"
-validate $? "Nginx service start"
+cp "$SCRIPT_DIR/nginx.conf" /etc/nginx/nginx.conf &>>"$LOG_FILE"
+VALIDATE $? "Copying custom nginx.conf"
 
-# Remove the default content
-echo -e "${y}Removing default content...${s}"
+systemctl restart nginx &>>"$LOG_FILE"
+VALIDATE $? "Restarting Nginx"
 
-rm -rf /usr/share/nginx/html/* &>> "$LOG_FILES"
-validate $? "Default content removal"
-
-# Downloading the frontend
-echo -e "${y}Downloading the frontend zip file...${s}"
-
-curl -L -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>> "$LOG_FILES"
-validate $? "Frontend zip file downloading"
-
-# Change to /usr/share/nginx/html directory
-cd /usr/share/nginx/html
-
-# Unzip the downloaded zip file
-echo -e "${y}Unzipping the frontend zip file...${s}"
-
-unzip /tmp/frontend.zip &>> "$LOG_FILES"
-validate $? "Frontend zip file unzip"
-
-# Copy custom Nginx configuration file
-echo -e "${y}Copying custom Nginx configuration file...${s}"
-
-cp $S_DIR/repos/nginx.conf /etc/nginx/nginx.conf &>> "$LOG_FILES"
-validate $? "Custom Nginx configuration file copy"
-
-# Restart Nginx service
-echo -e "${y}Restarting the Nginx service...${s}"
-
-systemctl restart nginx &>> "$LOG_FILES"
-validate $? "Nginx service restart"
-
-# Final message
-echo -e "${m}Nginx setup completed successfully..!${s}"
+echo -e "${C}Nginx setup completed successfully!${N}"
