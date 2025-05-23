@@ -47,8 +47,8 @@ dnf install nodejs -y &>> "$LOG_FILE"
 VALIDATE $? "Installing Node.js 20"
 
 # Create roboshop user if not exists
-id roboshop
-if [ "$?" -eq 0 ] 
+id roboshop &>/dev/null
+if [ $? -eq 0 ]
 then
     echo -e "roboshop user is ${g}already created${y} ... skipping${reset}"
 else
