@@ -65,7 +65,7 @@ VALIDATE $? "Unzipping shipping.zip"
 mvn clean package &>> "$LOG_FILE"
 VALIDATE $? "mvn package cleaning"
 
-mv target/shipping-1.0.jar shipping.jar 
+mv target/shipping-1.0.jar shipping.jar  &>> "$LOG_FILE"
 VALIDATE $? "moving of shipping of jar"
 
 cp $S_DIR/service/shipping.service /etc/systemd/system/shipping.service &>> "$LOG_FILE"
@@ -82,7 +82,7 @@ dnf install mysql -y &>> "$LOG_FILE"
 VALIDATE $? "installing mysql "
 
 mysql -h mysql.tcloudguru.in -u root -pRoboShop@1 -e 'use cities' &>> "$LOG_FILE"
-if [ $? -lt 0 ]
+if [ $? -ne 0 ]
 then
     mysql -h mysql.tcloudguru.in -uroot -pRoboShop@1 < /app/db/schema.sql &>> "$LOG_FILE"
     mysql -h mysql.tcloudguru.in -uroot -pRoboShop@1 < /app/db/app-user.sql &>> "$LOG_FILE"
