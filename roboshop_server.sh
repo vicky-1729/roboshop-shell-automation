@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#color codes
+r="\e[31m"
+g="\e[32m"
+y="\e[33m"
+b="\e[34m"
+m="\e[35m"
+s="\e[37m"
+
 # CONFIG
 AMI_ID="ami-09c813fb71547fc4f"
 SG_ID="sg-040ecf8bb247d6036"
@@ -11,7 +19,7 @@ INSTANCES=("mongodb" "catalogue" "user" "dispatch" "frontend" "payment" "shippin
 #for instance in "${INSTANCES[@]}"
 for instance in $@
 do
-  echo "Launching $instance..."
+  echo -e "Launching ${b}$instance...${s}"
   INSTANCE_ID=$(aws ec2 run-instances \
     --image-id $AMI_ID \
     --instance-type t3.micro \
@@ -34,7 +42,7 @@ do
     IP="$PRIVATE_IP"
   fi
 
-  echo "$instance → Public IP: $PUBLIC_IP | Private IP: $PRIVATE_IP"
+  echo "$instance → ${r}Public IP:${s} $PUBLIC_IP | ${r}Private IP:${s} $PRIVATE_IP"
 
   aws route53 change-resource-record-sets --hosted-zone-id $ZONE_ID --change-batch "{
     \"Comment\": \"DNS update for $RECORD_NAME\",
@@ -49,6 +57,6 @@ do
     }]
   }"
 
-  echo "$instance DNS record updated → $RECORD_NAME → $IP"
+  echo "${y}$instance DNS record updated → ${r}$RECORD_NAME → ${g}$IP${s}"
   echo "---------------------------------------------"
 done
