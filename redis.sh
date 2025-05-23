@@ -51,8 +51,9 @@ VALIDATE $? "Installing redis 7"
 sed -i "s/127.0.0.1/0.0.0.0/g" /etc/redis/redis.conf &>> $LOG_FILE
 VALIDATE $? "Updating the redis configuration"
 
-sed -i "s/protected-mode yes/protected-mode no" /etc/redis/redis.conf &>> $LOG_FILE
-VALIDATE $? "Updating the redis configuration"
+sed -i 's/^protected-mode yes/protected-mode no/' /etc/redis/redis.conf &>> "$LOG_FILE"
+VALIDATE $? "Updating the Redis configuration"
+
 
 systemctl enable redis &>> "$LOG_FILE"
 VALIDATE $? "Enabling redis service"
