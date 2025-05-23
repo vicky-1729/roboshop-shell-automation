@@ -3,19 +3,18 @@
 set -e
 
 # Color codes
-r="\e[31m"   # Red
-g="\e[32m"   # Green
-y="\e[33m"   # Yellow
-b="\e[34m"   # Blue
-m="\e[35m"   # Magenta
-reset="\e[0m"  # Reset
+r="\033[31m"   # Red
+g="\033[32m"   # Green
+y="\033[33m"   # Yellow
+b="\033[34m"   # Blue
+m="\033[35m"   # Magenta
+reset="\033[0m"  # Reset
 
 # CONFIG
 AMI_ID="ami-09c813fb71547fc4f"
 SG_ID="sg-040ecf8bb247d6036"
 ZONE_ID="Z08643193QT2QCZFDKUI1"
 DOMAIN_NAME="tcloudguru.in"
-
 
 for instance in "$@"; do
   echo -e "Launching ${y}${instance}...${reset}"
