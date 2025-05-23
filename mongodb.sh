@@ -33,15 +33,31 @@ fi
 # Function to validate the exit status of commands and print appropriate messages
 VALIDATE() {
     if [ "$1" -eq 0 ]; then
-        echo -e "${g}✔ $2 succeeded.${reset}"
+        echo -e "${g}✔ $2 succeeded.${reset}" | tee -a "$LOG_FILE"
     else
-        echo -e "${r}✖ $2 failed.${reset}"
+        echo -e "${r}✖ $2 failed.${reset}" | tee -a "$LOG_FILE"
         exit 1
     fi
 }
 
 
 
+cp $S_DIR/mongodb.repo /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
+VALIDATE $? "Copying MongoDB repo file"
+
+dnf install mongodb-org -y &>> "$LOG_FILE"
+VALIDATE $? "Installing mongodb server"
 
 
+systemctl enable mongod
+systemctl start mongod
+VALIDATE $? "Starting mongodb server"
+
+systemctl status mongod | grep Active &>> "$LOG_FILE"
+VALIDATE $? "checking mongodb server is running"
+
+sed -i "s/127.0.0.1/0.0.0.0/g" /etc/mongod.conf &>> "$LOG_FILE"
+
+systemctl restart mongod
+VALIDATE $? "restarting mongodb server"
 
