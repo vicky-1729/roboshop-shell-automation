@@ -38,7 +38,7 @@ VALIDATE() {
 }
 
 
-dnf install golang -y
+dnf install golang -y &>> "$LOG_FILE"
 VALIDATE $? "Installing golang"
 
 
@@ -64,13 +64,13 @@ unzip /tmp/dispatch.zip &>> "$LOG_FILE"
 VALIDATE $? "Unzipping dispatch.zip"
 
 # install dependencies
-go mod init dispatch
-go get 
-go build
+go mod init dispatch &>> "$LOG_FILE"
+go get &>> "$LOG_FILE"
+go build &>> "$LOG_FILE"
 
 VALIDATE $? " doing init,get,build process"
 
-cp $S_DIR/service/dispatch.service /etc/systemd/system/dispatch.service
+cp $S_DIR/service/dispatch.service /etc/systemd/system/dispatch.service &>> "$LOG_FILE"
 VALIDATE $? "dispatch service creation"
 
 systemctl daemon-reload
