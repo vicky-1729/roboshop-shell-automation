@@ -16,18 +16,15 @@ LOGS_FOLDER="/var/log/roboshop-logs"
 SCRIPT_NAME=$(basename "$0" .sh)
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log"
 
+# Create log directory if it doesn't exist
+mkdir -p $LOGS_FOLDER
+
 # Check for root privileges
 if [ $USERID -ne 0 ]; then
     echo -e "${r}ERROR:: Please run this script with root access${reset}"
     exit 1
 fi
 
-# Create log directory if it doesn't exist
-mkdir -p $LOGS_FOLDER
-touch $LOG_FILE || { echo -e "${r}ERROR:: Cannot write to log file $LOG_FILE. Check permissions.${reset}"; exit 1; }
-
-echo "Script started executing at: $(date)" | tee -a $LOG_FILE
-echo -e "You are running with ${g}root access${reset}" | tee -a $LOG_FILE
 
 # Validation function
 VALIDATE() {
