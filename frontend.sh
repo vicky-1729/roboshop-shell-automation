@@ -47,7 +47,7 @@ VALIDATE $? "Enabling nginx:1.24 module"
 dnf install nginx -y &>> "$LOG_FILE"
 VALIDATE $? "Installing nginx:1.24"
 
-systemctl enable  &>> "$LOG_FILE"
+systemctl enable nginx  &>> "$LOG_FILE"
 VALIDATE $? "Enabling nginx service"
 
 systemctl start nginx &>> "$LOG_FILE"
