@@ -47,9 +47,7 @@ dnf install nodejs -y &>> "$LOG_FILE"
 VALIDATE $? "Installing Node.js 20"
 
 # Create roboshop user if not exists
-id roboshop &>/dev/null
-if [ $? -eq 0 ]
-then
+if id roboshop &>/dev/null; then
     echo -e "roboshop user is ${g}already created${y} ... skipping${reset}"
 else
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> "$LOG_FILE"
@@ -61,7 +59,6 @@ mkdir -p /app &>> "$LOG_FILE"
 VALIDATE $? "Creating /app directory"
 
 rm -rf /app/* &>> "$LOG_FILE"
-
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>> "$LOG_FILE"
 VALIDATE $? "Downloading catalogue.zip"
@@ -76,27 +73,27 @@ VALIDATE $? "Installing Node.js dependencies"
 cp "$S_DIR/service/catalogue.service" /etc/systemd/system/catalogue.service &>> "$LOG_FILE"
 VALIDATE $? "Copying catalogue service file"
 
-systemctl daemon-reload
+systemctl daemon-reload &>> "$LOG_FILE"
 VALIDATE $? "Reloading systemd"
 
-systemctl enable catalogue
+systemctl enable catalogue &>> "$LOG_FILE"
 VALIDATE $? "Enabling catalogue service"
 
-systemctl start catalogue
+systemctl start catalogue &>> "$LOG_FILE"
 VALIDATE $? "Starting catalogue service"
 
 # MongoDB client setup
 cp "$S_DIR/repo_config/mongo.repo" /etc/yum.repos.d/mongodb.repo &>> "$LOG_FILE"
 VALIDATE $? "Copying MongoDB repo file"
 
-dnf install mongodb-mongosh -y
+dnf install mongodb-mongosh -y &>> "$LOG_FILE"
 VALIDATE $? "Installing MongoDB shell"
 
 # Load data into MongoDB if not already present
-STATUS=$(mongosh --host mongodb.daws84s.site --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+STATUS=$(mongosh --host mongodb.tcloudguru.in --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
 if [ "$STATUS" -lt 0 ]; then
     mongosh --host mongodb.tcloudguru.in </app/db/master-data.js &>> "$LOG_FILE"
     VALIDATE $? "Loading data into MongoDB"
 else
-    echo -e "Data is already loaded ... ${y}SKIPPING${reset}"
+    echo -e "Data is already loaded ... ${y}SKIPPING${reset}" | tee -a "$LOG_FILE"
 fi
