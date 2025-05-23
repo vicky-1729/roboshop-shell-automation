@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/bash
 
 # Exit on any error
 set -e
@@ -26,7 +25,8 @@ S_DIR=$(dirname "$0")
 mkdir -p $LOGS_FOLDER
 
 # Check for root privileges
-if [ $USERID -ne 0 ]; then
+if [ $USERID -ne 0 ]
+then
     echo -e "${r}ERROR:: Please run this script with root access${reset}" | tee -a $LOG_FILE
     exit 1
 fi
@@ -53,12 +53,12 @@ dnf install nodejs -y
 VALIDATE $? "installing nodejs:20"
 
 # creating the robo application
-roboshop id
+roboshop id &>> $LOG_FILE
 if [ "$?" -eq 0 ]
 then
     echo -e "roboshop user  is $g  already created $y skipping $reset"
 else
-    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>> $LOG_FILE
     VALIDATE $? "Creating roboshop system user"
 fi
 
