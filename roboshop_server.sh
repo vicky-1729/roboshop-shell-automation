@@ -55,5 +55,5 @@ for instance in "$@"; do
   }"
 
   echo -e "${y}$instance DNS record updated → ${r}$RECORD_NAME → ${g}$IP${reset}"
-  echo -e "${m}---------------------------------------------${reset}"
+  echo -e "${reset}-------------------------------------------------------------------${reset}"
 done
